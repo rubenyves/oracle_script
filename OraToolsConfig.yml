@@ -1,0 +1,74 @@
+#-------------------------------------------------------------
+# Orange Tools Configuration File : value not mandatory
+# To customize your environment
+# Format Version : 1.0
+#-------------------------------------------------------------
+# 1 - All tools
+#-------------------------------------------------------------
+# Oracle Sql*Plus Tool Path : default ORACLE_HOME/bin/sqlplus
+OraSqlplusPath:
+# OS Username (tool execution) : default oracle
+OraOsUser:
+# Oracle SID User Connection : default / as sysdba --> no blank in value - sample username/password or username/password@service
+# Privileges Oracle Schemas Compare Tool :  
+#     CREATE USER + [ALTER DATABASE on Standby Database] system privileges / EXP_FULL_DATABASE + IMP_FULL_DATABASE roles
+# Privileges Oracle Schemas Defects Tool :  
+#     SELECT ANY TABLE system privilege / EXECUTE on sys.dbms_output + sys.dbms_crypto / SELECT on sys.user$ + dba_users_with_defpwd
+# Privileges Oracle Get Configuration Tool :
+#     EXP_FULL_DATABASE role
+# Privileges Oracle Export Tool :
+#     FLASHBACK ANY TABLE + CREATE ANY DIRECTORY / EXP_FULL_DATABASE role
+# Privileges Oracle Import Tool :
+#     ALTER ANY TABLE + CREATE ANY DIRECTORY + CREATE ANY PROCEDURE + DROP USER + SYSOPER system privileges / IMP_FULL_DATABASE role
+OraConnect: 
+# Log files directory: default OraPath/ORACLE_SID/adm/dbalog
+OraLogDir:
+# Report files directory : default OraHome/orange-tools
+OraReportDir:
+#-------------------------------------------------------------
+# 2 - Datapump Tools and Schemas Compare Tool
+#-------------------------------------------------------------
+# Exports files directory : default OraPath/ORACLE_SID/e01
+OraExpDir:
+#-------------------------------------------------------------
+# 3 - Schemas Compare Tool and Schemas Defects Tool
+#-------------------------------------------------------------
+# Tool files directory : default OraHome/orange-tools
+OraToolDir:
+#-------------------------------------------------------------
+# 4 - Datapump Tools only
+#-------------------------------------------------------------
+# Oracle Export Datapump Tool Path : default ORACLE_HOME/bin/expdp
+OraExpdpPath:
+# Oracle Import Datapump Tool Path : default ORACLE_HOME/bin/impdp
+OraImpdpPath:
+#-------------------------------------------------------------
+# 5 - Schemas Compare Tool and Get Configuration Tool
+#-------------------------------------------------------------
+# Oracle Export Tool Path : default ORACLE_HOME/bin/exp
+OraExpPath:
+#-------------------------------------------------------------
+# 6 - Schemas Compare Tool only
+#-------------------------------------------------------------
+# Gzip Tool Path : default /usr/bin/gzip
+OraGzipPath:
+# Gunzip Tool Path : default /usr/bin/gunzip
+OraGunzipPath:
+# Oracle Import Tool Path : default ORACLE_HOME/bin/imp
+OraImpPath:
+# Temporary Tablespace : default TMP
+OraTmpTbs:
+# User Tablespace : default SYSAUX
+OraUserTbs:
+# User Tablespace Quota: default 250M
+OraUserTbsQuota:
+# User Password : default snaptmp
+OraUserPwd:
+# Oracle Service Name : default SID
+OraServiceName:
+#-------------------------------------------------------------
+# 7 - Get Configuration Tool Only
+#-------------------------------------------------------------
+# Oracle Product Owner : default oracle
+OraProductOwner:
+

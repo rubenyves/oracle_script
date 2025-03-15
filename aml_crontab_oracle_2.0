@@ -1,0 +1,135 @@
+# Crontab backup every hour
+0 * * * * (ksh /opt/operating/bin/save_crontab.ksh  1> /opt/oracle/operating/log/save_crontab.log 2>&1)
+
+######################################
+# AMLCONF Database
+######################################
+
+# Archiving and deleting oracle files (log, core, audit, track) every day
+01 03 * * * (su - oracle -c "ksh /opt/operating/bin/OperateOracleAll.ksh -S -clear dumps AMLCONF 1>/oradata/AMLCONF/adm/dbalog/OperateOracleAll_dumps.log 2>&1")
+05 03 * * * (su - oracle -c "ksh /opt/operating/bin/OperateOracleAll.ksh -S -clear alert AMLCONF 1>/oradata/AMLCONF/adm/dbalog/OperateOracleAll_alert.log 2>&1")
+09 03 * * * (su - oracle -c "ksh /opt/operating/bin/OperateOracleAll.ksh -S -clear listener LISTENER_AMLCONF 1> /oradata/AMLCONF/adm/dbalog/OperateOracleAll_listener.log 2>&1")
+13 03 * * * (su - oracle -c "ksh /opt/operating/bin/OperateOracleAll.ksh -S -clear dbalog AMLCONF 1>/oradata/AMLCONF/adm/dbalog/OperateOracleAll_dbalog.log 2>&1")
+17 03 * * * (su - oracle -c "ksh /opt/operating/bin/OperateOracleAll.ksh -S -clear adr AMLCONF 1> /oradata/AMLCONF/adm/dbalog/OperateOracleAll_adr.log 2>&1")
+
+# Collect daily statistics on  schema every day
+35 23 * * * (su - oracle -c "ksh /opt/operating/bin/analyze_incremental_statistics.ksh -i AMLCONF -s AMLCONF 1 >/oradata/AMLCONF/adm/dbalog/analyze_incremental_statistics_AMLCONF.log 2>&1")
+
+# Hot incremental backup (level 0) + archived logs of the database with RMAN utility every Sunday
+00 22 * *  0   (su - oracle -c "ksh /opt/operating/bin/rman_backup_database_incr.ksh AMLCONF 0 C 1>/oradata/AMLCONF/adm/dbalog/rman_backup_database_incr0.log 2>&1");(sleep 10);(su - oracle -c "ksh /opt/operating/bin/rman_backup_archivelogs.ksh AMLCONF 1>/oradata/AMLCONF/adm/dbalog/rman_backup_archivelogs.log 2>&1")
+
+# RMAN Backup of archived log files every day, except Sunday
+30 01 * * 1-6 (su - oracle -c "ksh /opt/operating/bin/rman_backup_database_incr.ksh AMLCONF 1 C 1>/oradata/AMLCONF/adm/dbalog/rman_backup_database_incr1.log 2>&1");(sleep 10);(su - oracle -c "ksh /opt/operating/bin/rman_backup_archivelogs.ksh AMLCONF 1>/oradata/AMLCONF/adm/dbalog/rman_backup_archivelogs.log 2>&1")
+
+# Delete RMAN backups for repository every day
+15 03 * * * (su - oracle -c "ksh /opt/operating/bin/rman_delete_backups.ksh AMLCONF 1>/oradata/AMLCONF/adm/dbalog/rman_delete_backups.log 2>&1")
+20 00,03,06,9,12,15,18,21 * * * (su - oracle -c "ksh /opt/operating/bin/rman_delete_archivelogs.ksh AMLCONF 1 1>/oradata/AMLCONF/adm/dbalog/rman_delete_archivelogs.log 2>&1")
+
+# RMAN Backup of archives log files every day
+20 1,3,5,7,9,11,13,15,17,19 * * * (su - oracle -c "ksh /opt/operating/bin/rman_backup_archivelogs.ksh AMLCONF 1> /oradata/AMLCONF/adm/dbalog/rman_backup_archivelogs.log 2>&1")
+######################################
+# AMLLR01 Database
+######################################
+
+# Archiving and deleting oracle files (log, core, audit, track) every day
+01 03 * * * (su - oracle -c "ksh /opt/operating/bin/OperateOracleAll.ksh -S -clear dumps AMLLR01 1>/oradata/AMLLR01/adm/dbalog/OperateOracleAll_dumps.log 2>&1")
+05 03 * * * (su - oracle -c "ksh /opt/operating/bin/OperateOracleAll.ksh -S -clear alert AMLLR01 1>/oradata/AMLLR01/adm/dbalog/OperateOracleAll_alert.log 2>&1")
+09 03 * * * (su - oracle -c "ksh /opt/operating/bin/OperateOracleAll.ksh -S -clear listener LISTENER_AMLLR01 1> /oradata/AMLLR01/adm/dbalog/OperateOracleAll_listener.log 2>&1")
+13 03 * * * (su - oracle -c "ksh /opt/operating/bin/OperateOracleAll.ksh -S -clear dbalog AMLLR01 1>/oradata/AMLLR01/adm/dbalog/OperateOracleAll_dbalog.log 2>&1")
+17 03 * * * (su - oracle -c "ksh /opt/operating/bin/OperateOracleAll.ksh -S -clear adr AMLLR01 1> /oradata/AMLLR01/adm/dbalog/OperateOracleAll_adr.log 2>&1")
+
+# Collect daily statistics on  schema every day
+35 23 * * * (su - oracle -c "ksh /opt/operating/bin/analyze_incremental_statistics.ksh -i AMLLR01 -s AMLLR01 -d 1  1 >/oradata/AMLLR01/adm/dbalog/analyze_incremental_statistics_AMLLR01.log 2>&1")
+
+# Hot incremental backup (level 0) + archived logs of the database with RMAN utility every Sunday
+00 22 * *  0   (su - oracle -c "ksh /opt/operating/bin/rman_backup_database_incr.ksh AMLLR01 0 C 1>/oradata/AMLLR01/adm/dbalog/rman_backup_database_incr0.log 2>&1");(sleep 10);(su - oracle -c "ksh /opt/operating/bin/rman_backup_archivelogs.ksh AMLLR01 1>/oradata/AMLLR01/adm/dbalog/rman_backup_archivelogs.log 2>&1")
+
+# RMAN Backup of archived log files every day, except Sunday
+30 01 * * 1-6 (su - oracle -c "ksh /opt/operating/bin/rman_backup_database_incr.ksh AMLLR01 1 C 1>/oradata/AMLLR01/adm/dbalog/rman_backup_database_incr1.log 2>&1");(sleep 10);(su - oracle -c "ksh /opt/operating/bin/rman_backup_archivelogs.ksh AMLLR01 1>/oradata/AMLLR01/adm/dbalog/rman_backup_archivelogs.log 2>&1")
+
+# Delete RMAN backups for repository every day
+15 03 * * * (su - oracle -c "ksh /opt/operating/bin/rman_delete_backups.ksh AMLLR01 1>/oradata/AMLLR01/adm/dbalog/rman_delete_backups.log 2>&1")
+20 00,03,06,9,12,15,18,21 * * * (su - oracle -c "ksh /opt/operating/bin/rman_delete_archivelogs.ksh AMLLR01 1 1>/oradata/AMLLR01/adm/dbalog/rman_delete_archivelogs.log 2>&1")
+
+# RMAN Backup of archives log files every day
+20 1,3,5,7,9,11,13,15,17,19 * * * (su - oracle -c "ksh /opt/operating/bin/rman_backup_archivelogs.ksh AMLLR01 1> /oradata/AMLLR01/adm/dbalog/rman_backup_archivelogs.log 2>&1")
+######################################
+# AMLCM01 Database
+######################################
+
+# Archiving and deleting oracle files (log, core, audit, track) every day
+01 03 * * * (su - oracle -c "ksh /opt/operating/bin/OperateOracleAll.ksh -S -clear dumps AMLCM01 1>/oradata/AMLCM01/adm/dbalog/OperateOracleAll_dumps.log 2>&1")
+05 03 * * * (su - oracle -c "ksh /opt/operating/bin/OperateOracleAll.ksh -S -clear alert AMLCM01 1>/oradata/AMLCM01/adm/dbalog/OperateOracleAll_alert.log 2>&1")
+09 03 * * * (su - oracle -c "ksh /opt/operating/bin/OperateOracleAll.ksh -S -clear listener LISTENER_AMLCM01 1> /oradata/AMLCM01/adm/dbalog/OperateOracleAll_listener.log 2>&1")
+13 03 * * * (su - oracle -c "ksh /opt/operating/bin/OperateOracleAll.ksh -S -clear dbalog AMLCM01 1>/oradata/AMLCM01/adm/dbalog/OperateOracleAll_dbalog.log 2>&1")
+17 03 * * * (su - oracle -c "ksh /opt/operating/bin/OperateOracleAll.ksh -S -clear adr AMLCM01 1> /oradata/AMLCM01/adm/dbalog/OperateOracleAll_adr.log 2>&1")
+
+# Collect daily statistics on  schema every day
+35 23 * * * (su - oracle -c "ksh /opt/operating/bin/analyze_incremental_statistics.ksh -i AMLCM01 -s AMLCM01 1 >/oradata/AMLCM01/adm/dbalog/analyze_incremental_statistics_AMLCM01.log 2>&1")
+
+# Hot incremental backup (level 0) + archived logs of the database with RMAN utility every Sunday
+00 22 * *  0   (su - oracle -c "ksh /opt/operating/bin/rman_backup_database_incr.ksh AMLCM01 0 C 1>/oradata/AMLCM01/adm/dbalog/rman_backup_database_incr0.log 2>&1");(sleep 10);(su - oracle -c "ksh /opt/operating/bin/rman_backup_archivelogs.ksh AMLCM01 1>/oradata/AMLCM01/adm/dbalog/rman_backup_archivelogs.log 2>&1")
+
+# RMAN Backup of archived log files every day, except Sunday
+30 01 * * 1-6 (su - oracle -c "ksh /opt/operating/bin/rman_backup_database_incr.ksh AMLCM01 1 C 1>/oradata/AMLCM01/adm/dbalog/rman_backup_database_incr1.log 2>&1");(sleep 10);(su - oracle -c "ksh /opt/operating/bin/rman_backup_archivelogs.ksh AMLCM01 1>/oradata/AMLCM01/adm/dbalog/rman_backup_archivelogs.log 2>&1")
+
+# Delete RMAN backups for repository every day
+15 03 * * * (su - oracle -c "ksh /opt/operating/bin/rman_delete_backups.ksh AMLCM01 1>/oradata/AMLCM01/adm/dbalog/rman_delete_backups.log 2>&1")
+20 00,03,06,9,12,15,18,21 * * * (su - oracle -c "ksh /opt/operating/bin/rman_delete_archivelogs.ksh AMLCM01 1 1>/oradata/AMLCM01/adm/dbalog/rman_delete_archivelogs.log 2>&1")
+
+# RMAN Backup of archives log files every day
+20 1,3,5,7,9,11,13,15,17,19 * * * (su - oracle -c "ksh /opt/operating/bin/rman_backup_archivelogs.ksh AMLCM01 1> /oradata/AMLCM01/adm/dbalog/rman_backup_archivelogs.log 2>&1")
+######################################
+# AMLSL01 Database
+######################################
+
+# Archiving and deleting oracle files (log, core, audit, track) every day
+01 03 * * * (su - oracle -c "ksh /opt/operating/bin/OperateOracleAll.ksh -S -clear dumps AMLSL01 1>/oradata/AMLSL01/adm/dbalog/OperateOracleAll_dumps.log 2>&1")
+05 03 * * * (su - oracle -c "ksh /opt/operating/bin/OperateOracleAll.ksh -S -clear alert AMLSL01 1>/oradata/AMLSL01/adm/dbalog/OperateOracleAll_alert.log 2>&1")
+09 03 * * * (su - oracle -c "ksh /opt/operating/bin/OperateOracleAll.ksh -S -clear listener LISTENER_AMLSL01 1> /oradata/AMLSL01/adm/dbalog/OperateOracleAll_listener.log 2>&1")
+13 03 * * * (su - oracle -c "ksh /opt/operating/bin/OperateOracleAll.ksh -S -clear dbalog AMLSL01 1>/oradata/AMLSL01/adm/dbalog/OperateOracleAll_dbalog.log 2>&1")
+17 03 * * * (su - oracle -c "ksh /opt/operating/bin/OperateOracleAll.ksh -S -clear adr AMLSL01 1> /oradata/AMLSL01/adm/dbalog/OperateOracleAll_adr.log 2>&1")
+
+# Collect daily statistics on  schema every day
+35 23 * * * (su - oracle -c "ksh /opt/operating/bin/analyze_incremental_statistics.ksh -i AMLSL01 -s AMLSL01 1 >/oradata/AMLSL01/adm/dbalog/analyze_incremental_statistics_AMLSL01.log 2>&1")
+
+# Hot incremental backup (level 0) + archived logs of the database with RMAN utility every Sunday
+00 22 * *  0   (su - oracle -c "ksh /opt/operating/bin/rman_backup_database_incr.ksh AMLSL01 0 C 1>/oradata/AMLSL01/adm/dbalog/rman_backup_database_incr0.log 2>&1");(sleep 10);(su - oracle -c "ksh /opt/operating/bin/rman_backup_archivelogs.ksh AMLSL01 1>/oradata/AMLSL01/adm/dbalog/rman_backup_archivelogs.log 2>&1")
+
+# RMAN Backup of archived log files every day, except Sunday
+30 01 * * 1-6 (su - oracle -c "ksh /opt/operating/bin/rman_backup_database_incr.ksh AMLSL01 1 C 1>/oradata/AMLSL01/adm/dbalog/rman_backup_database_incr1.log 2>&1");(sleep 10);(su - oracle -c "ksh /opt/operating/bin/rman_backup_archivelogs.ksh AMLSL01 1>/oradata/AMLSL01/adm/dbalog/rman_backup_archivelogs.log 2>&1")
+
+# Delete RMAN backups for repository every day
+15 03 * * * (su - oracle -c "ksh /opt/operating/bin/rman_delete_backups.ksh AMLSL01 1>/oradata/AMLSL01/adm/dbalog/rman_delete_backups.log 2>&1")
+20 00,03,06,9,12,15,18,21 * * * (su - oracle -c "ksh /opt/operating/bin/rman_delete_archivelogs.ksh AMLSL01 1 1>/oradata/AMLSL01/adm/dbalog/rman_delete_archivelogs.log 2>&1")
+
+# RMAN Backup of archives log files every day
+20 1,3,5,7,9,11,13,15,17,19 * * * (su - oracle -c "ksh /opt/operating/bin/rman_backup_archivelogs.ksh AMLSL01 1> /oradata/AMLSL01/adm/dbalog/rman_backup_archivelogs.log 2>&1")
+######################################
+# AMLMA01 Database
+######################################
+
+# Archiving and deleting oracle files (log, core, audit, track) every day
+01 03 * * * (su - oracle -c "ksh /opt/operating/bin/OperateOracleAll.ksh -S -clear dumps AMLMA01 1>/oradata/AMLMA01/adm/dbalog/OperateOracleAll_dumps.log 2>&1")
+05 03 * * * (su - oracle -c "ksh /opt/operating/bin/OperateOracleAll.ksh -S -clear alert AMLMA01 1>/oradata/AMLMA01/adm/dbalog/OperateOracleAll_alert.log 2>&1")
+09 03 * * * (su - oracle -c "ksh /opt/operating/bin/OperateOracleAll.ksh -S -clear listener LISTENER_AMLMA01 1> /oradata/AMLMA01/adm/dbalog/OperateOracleAll_listener.log 2>&1")
+13 03 * * * (su - oracle -c "ksh /opt/operating/bin/OperateOracleAll.ksh -S -clear dbalog AMLMA01 1>/oradata/AMLMA01/adm/dbalog/OperateOracleAll_dbalog.log 2>&1")
+17 03 * * * (su - oracle -c "ksh /opt/operating/bin/OperateOracleAll.ksh -S -clear adr AMLMA01 1> /oradata/AMLMA01/adm/dbalog/OperateOracleAll_adr.log 2>&1")
+
+# Collect daily statistics on  schema every day
+35 23 * * * (su - oracle -c "ksh /opt/operating/bin/analyze_incremental_statistics.ksh -i AMLMA01 -s AMLMA01 -d 1  1 >/oradata/AMLMA01/adm/dbalog/analyze_incremental_statistics_AMLMA01.log 2>&1")
+
+# Hot incremental backup (level 0) + archived logs of the database with RMAN utility every Sunday
+00 22 * *  0   (su - oracle -c "ksh /opt/operating/bin/rman_backup_database_incr.ksh AMLMA01 0 C 1>/oradata/AMLMA01/adm/dbalog/rman_backup_database_incr0.log 2>&1");(sleep 10);(su - oracle -c "ksh /opt/operating/bin/rman_backup_archivelogs.ksh AMLMA01 1>/oradata/AMLMA01/adm/dbalog/rman_backup_archivelogs.log 2>&1")
+
+# RMAN Backup of archived log files every day, except Sunday
+30 01 * * 1-6 (su - oracle -c "ksh /opt/operating/bin/rman_backup_database_incr.ksh AMLMA01 1 C 1>/oradata/AMLMA01/adm/dbalog/rman_backup_database_incr1.log 2>&1");(sleep 10);(su - oracle -c "ksh /opt/operating/bin/rman_backup_archivelogs.ksh AMLMA01 1>/oradata/AMLMA01/adm/dbalog/rman_backup_archivelogs.log 2>&1")
+
+# Delete RMAN backups for repository every day
+15 03 * * * (su - oracle -c "ksh /opt/operating/bin/rman_delete_backups.ksh AMLMA01 1>/oradata/AMLMA01/adm/dbalog/rman_delete_backups.log 2>&1")
+20 00,03,06,9,12,15,18,21 * * * (su - oracle -c "ksh /opt/operating/bin/rman_delete_archivelogs.ksh AMLMA01 1 1>/oradata/AMLMA01/adm/dbalog/rman_delete_archivelogs.log 2>&1")
+
+# RMAN Backup of archives log files every day
+20 1,3,5,7,9,11,13,15,17,19 * * * (su - oracle -c "ksh /opt/operating/bin/rman_backup_archivelogs.ksh AMLMA01 1> /oradata/AMLMA01/adm/dbalog/rman_backup_archivelogs.log 2>&1")
+
+

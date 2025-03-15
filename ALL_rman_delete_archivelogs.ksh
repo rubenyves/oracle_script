@@ -1,0 +1,25 @@
+#!/bin/ksh
+# @(#):Version:1.2
+#--------------------------------------------------------------------------------------------------------------
+#   Script : ALL_rman_delete_archivelogs.ksh 
+#
+#   Description : Launch of RMAN delete backups.
+#
+#
+#   V1.0 :  Akili Zegaoui         04/02/2021:  Initiale version
+#   V1.1 :  Akili Zegaoui         21/06/2021:  Rewritting based on Oracle config file.
+#   V1.2 :  Akili Zegaoui         18/10/2021:  New retention value. 
+#--------------------------------------------------------------------------------------------------------------
+
+if [ ! -f /etc/oratab ]; then
+   echo "/etc/oratab file not found !"
+   exit 1
+fi
+
+for i in $(grep -Ev "^#|^ " /etc/oratab); do
+   dbn=$(echo $i | awk -F":" '{print $1 }')
+   echo Launch : $dbn, check the logfile /oradata/$dbn/adm/dbalog/rman_delete_archivelogs.log
+   echo
+   /opt/operating/bin/rman_delete_archivelogs.ksh $dbn 2/24 1> /oradata/$dbn/adm/dbalog/rman_delete_archivelogs.log 
+done
+
